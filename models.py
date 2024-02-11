@@ -1,5 +1,5 @@
 from tortoise import Tortoise, fields, models
-
+from config import TORTOISE_ORM
 
 class Chat(models.Model):
     id = fields.BigIntField(pk=True)
@@ -30,11 +30,17 @@ class UserChat(models.Model):
     admin = fields.BooleanField(default=False)
 
 
-class Autopost(models.Model):
-    user = fields.ForeignKeyField("models.User", related_name="user_chats")
-    chat = fields.ForeignKeyField("models.Chat", related_name="user_chats")
-    admin = fields.BooleanField(default=False)
-    
+class AutoPost(models.Model):
+    user = fields.ForeignKeyField("models.User", related_name="user_post")
+    chat = fields.ForeignKeyField("models.Chat", related_name="post_chat")
+    text = fields.TextField(null=True)
+    start_date = fields.DateField(null=True)
+    end_date = fields.DateField(null=True)
+
+
+class PostDate(models.Model):
+    post = fields.ForeignKeyField("models.AutoPost", related_name="post_date")
+    time = fields.TimeField(null=True)
 
 
 async def add_user_chat(user, chat):
@@ -101,8 +107,6 @@ async def remove_channel(channel_id):
 
 
 async def init():
-    await Tortoise.init(
-        db_url='postgres://postgres:123456@localhost:5432/moderator',
-        modules={'models': ['models']},
-    )
+    await Tortoise.init(config=TORTOISE_ORM)
     await Tortoise.generate_schemas()
+    

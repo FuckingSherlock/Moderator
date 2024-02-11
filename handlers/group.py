@@ -62,7 +62,7 @@ async def process_message(message: Message):
         if data.user_chat.admin:
             return
         if not data.need_sub:
-            raise Exception
+            raise CustomException
         await user_warning(data, message)
     except CustomException as e:
         print(e)

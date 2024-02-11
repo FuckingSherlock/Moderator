@@ -29,5 +29,5 @@ async def warning(channels, mention, warnings_count):
             text="ПОДПИСАТЬСЯ",
             url=f"https://t.me/{channel.username}"
         ))
-        msg = f"Уважаемый {mention}! Для того чтобы иметь возможность писать в данном чате, подпишитесь на наш канал. Осталось предупреждений: {3-warnings_count}",
+        msg = f"Уважаемый {mention}! Для того чтобы иметь возможность писать в данном чате, подпишитесь на наш канал. Осталось предупреждений: {3-warnings_count}"
         return msg, builder.as_markup()

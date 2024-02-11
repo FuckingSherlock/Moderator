@@ -5,8 +5,10 @@ from models import *
 from aiogram import Bot
 from config import TOKEN
 import asyncio
-from handlers import group, my_chat_member, private
-
+from handlers import (
+    group, my_chat_member,
+    private, my_chat_member
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
