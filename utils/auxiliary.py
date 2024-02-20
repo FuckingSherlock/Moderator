@@ -3,7 +3,7 @@ from aiogram.types import Message
 from aiogram import Bot
 from config import CustomException, ForbiddenAPI, CustomData
 from models import (
-    Channel, User,
+    Channel, User, UserChat,
     create_user,
     remove_user,
     create_chat,
@@ -57,18 +57,19 @@ async def customs(msg):
 async def register(_user, user_name, _chat):
     chat = await create_chat(_chat.id, _chat.username)
     channels = await Channel.filter(chat=chat).all()
-    if not (chat.watched or channels):
-        raise CustomException(
-            message='Чат не отслеживается, не назначены каналы')
     user = await User.filter(id=_user.id).first()
     if not user:
         member = await bot.get_chat_member(_chat.id, _user.id)
         user = await create_user(_user.id, user_name)
+        user_chat = await add_user_chat(user=user, chat=chat)
         if member.status.name in ['ADMINISTRATOR', 'OWNER', 'CREATOR']:
             user_chat.admin = True
             await user_chat.save()
-    need_sub = await populate_need_sub(user, channels)
     user_chat = await add_user_chat(user=user, chat=chat)
+    if not (chat.watched or channels):
+        raise CustomException(
+            message='Чат не отслеживается, не назначены каналы')
+    need_sub = await populate_need_sub(user, channels)
     return [user, chat, user_chat, channels, need_sub]
 
 
@@ -107,7 +108,7 @@ async def user_warning(data, message: Message):
         await remove_user(data.user, data.user_chat)
         await bot.ban_chat_member(chat_id=data.chat.id, user_id=data.user.id)
     else:
-        msg, markup = await warning(
+        msg, markup = warning(
             data.need_sub, data.mention, data.user_chat.warnings)
         _msg = await bot.send_message(
             data.chat.id, msg, reply_markup=markup,
@@ -127,12 +128,33 @@ async def react(react_type, message: Message, arg=None):
             await delete_message(await message.answer(text=msg))
             raise CustomException(message=msg)
         case "already_exist":
-            msg, markup = await already_exist(arg)
+            msg, markup = already_exist(arg)
             await delete_message(
                 await message.answer(text=msg, reply_markup=markup))
             raise CustomException(message=msg)
         case "no_channel":
-            msg, markup = await no_channel(arg)
+            msg, markup = no_channel(arg)
             await delete_message(
                 await message.answer(text=msg, reply_markup=markup))
             raise CustomException(message=msg, chat=message.chat)
+
+
+async def form_description(data):
+    times = ', '.join(time.strftime('%H:%M') for time in data['time'])
+    descr = f"Время отправки: \n{times}\nДата начала: {data['date']['start'].strftime('%d.%m')} \nДата окончания: {data['date']['end'].strftime('%d.%m')}\nЧат: {data['chat'].username}"
+    return {
+        'message': data['content'],
+        'chat': data['chat'],
+        'chat_id': data['chat'].id,
+        'date': data['date'],
+        'times': data['time'],
+        'descr': descr
+    }
+
+
+async def get_user_chats(message: Message):
+    user = message.from_user
+    user_name = await get_username_mention(user)
+    user = await create_user(user_id=user.id, username=user_name)
+    user_chats = await UserChat.filter(user=user, admin=True).prefetch_related('chat')
+    return user_chats

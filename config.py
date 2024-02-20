@@ -1,7 +1,10 @@
 from collections import namedtuple
 import sys
+import environs
 
-TOKEN = '6730054093:AAHBUqAx1lL_61FpzKwQHtt9AHN1Fg27JZo'
+
+env = environs.Env()
+env.read_env('.env')
 
 
 class ForbiddenAPI(Exception):
@@ -31,5 +34,24 @@ CustomData = namedtuple(
 )
 
 
+TORTOISE_ORM = {
+    "connections": {
+        "default": env('DATABASE_CONNECTION_URL')
+    },
+    "apps": {
+        "models": {
+            "models": ["models", "aerich.models"],
+            "default_connection": "default",
+        }
+    },
+    "aerich": {
+        "migration_store": "aerich.models.AerichMigrationStore",
+    },
+}
+
+TOKEN = env('BOT_TOKEN')
+
+
 # 3tcoGZH5sN40f1R
 # tmux attach-session -t 0
+#  aerich init -t config.TORTOISE_ORM

@@ -1,6 +1,6 @@
 from aiogram import Router
 from aiogram.enums import ChatType
-from filters.chat_type import ChatTypeFilter
+from filters.filters import ChatTypeFilter
 from aiogram.types import ChatMemberUpdated
 from models import (
     create_chat, create_channel,
@@ -10,7 +10,7 @@ from models import (
 router = Router()
 
 
-@router.my_chat_member(ChatTypeFilter(chat_type=["group", "supergroup"]))
+@router.my_chat_member()
 async def on_channel_status_change(chat_member: ChatMemberUpdated):
     chat = chat_member.chat
     status = chat_member.new_chat_member.status
