@@ -1,6 +1,7 @@
 from tortoise import Tortoise, fields, models
 from config import TORTOISE_ORM
 
+
 class Chat(models.Model):
     id = fields.BigIntField(pk=True)
     username = fields.CharField(max_length=255)
@@ -21,6 +22,7 @@ class User(models.Model):
     username = fields.CharField(max_length=255)
     channels = fields.ManyToManyField(
         "models.Channel", related_name="channels", reverse="users")
+    user_chats = fields.ReverseRelation["UserChat"]
 
 
 class UserChat(models.Model):
@@ -38,9 +40,23 @@ class AutoPost(models.Model):
     end_date = fields.DateField(null=True)
 
 
-class PostDate(models.Model):
-    post = fields.ForeignKeyField("models.AutoPost", related_name="post_date")
+class PostTime(models.Model):
+    post = fields.ForeignKeyField("models.AutoPost", related_name="post_time")
     time = fields.TimeField(null=True)
+
+
+async def create_edit_autopost(user, chat, text, start_date, end_date):
+    autopost = await AutoPost.filter(chat=chat, user=user, text=text).first()
+    if not autopost:
+        autopost = await AutoPost.create(chat=chat, user=user, text=text, start_date=start_date, end_date=end_date)
+    return autopost
+
+
+async def add_post_time(post, time):
+    post_time = await PostTime.filter(post=post, time=time).first()
+    if not post_time:
+        post_time = await PostTime.create(post=post, time=time)
+    return post_time
 
 
 async def add_user_chat(user, chat):
@@ -109,4 +125,3 @@ async def remove_channel(channel_id):
 async def init():
     await Tortoise.init(config=TORTOISE_ORM)
     await Tortoise.generate_schemas()
-    

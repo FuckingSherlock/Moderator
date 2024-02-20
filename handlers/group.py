@@ -8,7 +8,7 @@ from models import *
 
 from aiogram.filters.command import Command, CommandObject
 from aiogram.exceptions import TelegramForbiddenError
-from filters.chat_type import ChatTypeFilter, ContentTypeFilter
+from filters.filters import ChatTypeFilter, ContentTypeFilter
 
 from utils.auxiliary import *
 
@@ -60,9 +60,9 @@ async def process_message(message: Message):
     try:
         data = await customs(message)
         if data.user_chat.admin:
-            return
+            raise CustomException(message='Это админ')
         if not data.need_sub:
-            raise CustomException
+            raise CustomException(message='Подписки не требуются')
         await user_warning(data, message)
     except CustomException as e:
         print(e)

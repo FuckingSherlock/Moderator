@@ -2,7 +2,6 @@ from collections import namedtuple
 import sys
 import environs
 
-TOKEN = '6730054093:AAHBUqAx1lL_61FpzKwQHtt9AHN1Fg27JZo'
 
 env = environs.Env()
 env.read_env('.env')
@@ -49,6 +48,8 @@ TORTOISE_ORM = {
         "migration_store": "aerich.models.AerichMigrationStore",
     },
 }
+
+TOKEN = env('BOT_TOKEN')
 
 
 # 3tcoGZH5sN40f1R

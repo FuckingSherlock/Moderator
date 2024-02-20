@@ -1,6 +1,6 @@
 from aiogram import Router
 from aiogram.enums import ChatType
-from filters.chat_type import ChatTypeFilter
+from filters.filters import ChatTypeFilter
 from aiogram.types import ChatMemberUpdated
 from models import (
     create_chat, create_channel,
