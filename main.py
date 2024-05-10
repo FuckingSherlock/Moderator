@@ -25,7 +25,6 @@ async def main():
     group.set_bot(bot)
     auxiliary.set_bot(bot)
     private.set_bot(bot)
-    # autopost.set_bot(bot)
     asyncio.create_task(worker.worker())
 
     dp.include_router(my_chat_member.router)
@@ -34,7 +33,7 @@ async def main():
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
-
+    
 
 if __name__ == "__main__":
     asyncio.run(main())

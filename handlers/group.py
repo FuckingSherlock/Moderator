@@ -66,14 +66,3 @@ async def process_message(message: Message):
         await user_warning(data, message)
     except CustomException as e:
         print(e)
-
-
-# from aiogram.enums.dice_emoji import DiceEmoji
-# @router.message(Command(commands=["dice"]),)
-# async def cmd_dice_in_group(message: Message):
-#     await message.answer_dice(emoji=DiceEmoji.DICE)
-
-
-# @router.message(Command("basketball"),)
-# async def cmd_basketball_in_group(message: Message):
-#     await message.answer_dice(emoji=DiceEmoji.BASKETBALL)
