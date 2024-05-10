@@ -1,7 +1,5 @@
 from aiogram.types import Message
-from aiogram import Bot
 from models import *
-from aiogram.filters.command import Command
 from utils.auxiliary import *
 import datetime
 from datetime import datetime, timedelta

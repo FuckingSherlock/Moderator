@@ -66,4 +66,3 @@ async def process_message(message: Message):
         await user_warning(data, message)
     except CustomException as e:
         print(e)
-
