@@ -57,7 +57,7 @@ async def create_post(message: Message, state: FSMContext):
             reply_markup=chats_autopost(chats_names))
         await state.set_state(PostStates.chat)
     else:
-        await message.answer('Пшол нахуй, ноунейм несчатсный')
+        await message.answer('Ты не админ, вали отсюда')
 
 
 @router.callback_query(PostStates.chat)
